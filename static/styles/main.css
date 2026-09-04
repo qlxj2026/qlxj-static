@@ -1,0 +1,580 @@
+/* ============================================================
+   青蓝主题样式（Fluent 2 设计语言）
+   基底：Bootstrap 5.3.8（已移除 Bootswatch lux，避免对抗性覆盖）
+   结构：1. Fluent 2 主题令牌（品牌 + 中性/圆角/阴影/字体/动效）
+         2. Bootstrap 接合（变量映射，不写死色值）
+         3. 基础元素
+         4. 组件样式
+         5. 视觉母题工具类
+         6. 内容元素
+   约定：新增颜色一律走令牌或 Bootstrap 语义变量，避免硬编码散落
+   ============================================================ */
+
+/* ===== 1. Fluent 2 主题令牌 ===== */
+:root {
+    /* 品牌色：青（亮）→ 深青 */
+    --qlxj-primary: #0ea5a4;
+    --qlxj-primary-deep: #0e7490;
+    --qlxj-primary-rgb: 14, 165, 164;
+    --qlxj-primary-deep-rgb: 14, 116, 144;
+
+    /* 主题渐变：全站唯一的渐变定义，渐变文字/装饰条共用 */
+    --qlxj-gradient: linear-gradient(120deg, var(--qlxj-primary-deep), var(--qlxj-primary) 60%);
+    --qlxj-gradient-deep: linear-gradient(to right, #05386b, #5cdb95);
+
+    /* 悬停抬升的统一阴影（品牌色调） */
+    --qlxj-lift-shadow: 0 10px 24px rgba(var(--qlxj-primary-deep-rgb), 0.18);
+
+    /* Fluent 2 中性色 */
+    --fluent-neutral-bg: #fafafa;
+    --fluent-surface: #ffffff;
+    --fluent-text-primary: #242424;
+    --fluent-text-secondary: #616161;
+    --fluent-stroke: rgba(0, 0, 0, 0.08);
+    --fluent-stroke-strong: rgba(0, 0, 0, 0.15);
+    --fluent-control-hover: rgba(0, 0, 0, 0.04);
+
+    /* Fluent 2 圆角：控件 4px / 表面 8px / 胶囊 999px */
+    --fluent-radius-sm: 4px;
+    --fluent-radius-lg: 8px;
+    --fluent-radius-round: 999px;
+
+    /* Fluent 2 分层阴影 shadow2/4/8/16/28 */
+    --fluent-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.14);
+    --fluent-shadow-4: 0 2px 4px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
+    --fluent-shadow-8: 0 4px 8px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
+    --fluent-shadow-16: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.12);
+    --fluent-shadow-28: 0 14px 28px rgba(0, 0, 0, 0.24), 0 0 8px rgba(0, 0, 0, 0.2);
+
+    /* Fluent 2 字体与动效 */
+    --fluent-font-family: "Segoe UI", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --fluent-duration-fast: 100ms;
+    --fluent-duration-normal: 200ms;
+    --fluent-easing: cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* ===== 2. Bootstrap 接合 ===== */
+:root {
+    /* 供给 Bootstrap 语义色：text-primary / bg-primary / border-primary /
+       link-primary 等自动跟随品牌色（全站唯一定义） */
+    --bs-primary: var(--qlxj-primary);
+    --bs-primary-rgb: var(--qlxj-primary-rgb);
+
+    --bs-body-font-family: var(--fluent-font-family);
+    --bs-body-color: var(--fluent-text-primary);
+    --bs-border-color: var(--fluent-stroke);
+    --bs-border-radius: var(--fluent-radius-sm);
+    --bs-border-radius-lg: var(--fluent-radius-lg);
+    --bs-light: #f0f2f5;
+
+    --bs-list-group-color: #55595c;
+    ;
+}
+
+/* ===== 3. 基础元素 ===== */
+
+/* 页面氛围：body 两团低透明度径向渐变（青/深青），fixed 使其不随滚动消失 */
+body {
+    background-image:
+        radial-gradient(1100px 460px at 12% -6%, rgba(var(--qlxj-primary-rgb), 0.08), transparent 62%),
+        radial-gradient(900px 420px at 88% -10%, rgba(var(--qlxj-primary-deep-rgb), 0.07), transparent 60%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+/* Fluent 2 标题：semibold + 负字距 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--fluent-text-primary);
+}
+
+a {
+    color: #55595c;
+}
+
+/* ===== 4. 组件样式 ===== */
+
+/* --- 表面：卡片 / 模态框 / 下拉菜单（Fluent 2 surface：描边 + 8px 圆角 + shadow2） --- */
+.card,
+.modal-content,
+.dropdown-menu {
+    background: var(--fluent-surface);
+    border: 1px solid var(--fluent-stroke);
+    border-radius: var(--fluent-radius-lg);
+    box-shadow: var(--fluent-shadow-2);
+}
+
+.card:hover {
+    box-shadow: var(--fluent-shadow-4);
+}
+
+/* Fluent 2 浮层（flyout）：acrylic 材质类配合使用（见 base.html 下拉菜单） */
+.dropdown-menu {
+    box-shadow: var(--fluent-shadow-16);
+}
+
+/* ===== 多级下拉（导航「动态」菜单：分类 → 年份团队子菜单） ===== */
+/* 结构见 base.html：.dropdown-menu 内嵌 .dropdown，子菜单用纯 CSS hover 弹出 */
+.dropdown-menu .dropdown {
+    position: relative;
+}
+
+/* 子菜单切换器：dropdown-item 外观，hover 时高亮整行 */
+.dropdown-menu .dropdown > .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+}
+
+/* 子菜单：定位到父条目右侧，与父条目顶部对齐 */
+.dropdown-menu .dropdown .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -0.25rem; /* 抵消父菜单的 padding-y，使子菜单首项与父条目对齐 */
+    display: none; /* 默认隐藏（覆盖 Bootstrap 的 display:none 默认值，纯 CSS 接管显隐） */
+}
+
+/* 悬停或聚焦时弹出子菜单 */
+.dropdown-menu .dropdown:hover > .dropdown-menu,
+.dropdown-menu .dropdown:focus-within > .dropdown-menu {
+    display: block;
+}
+
+/* 弹出时的进入动画：轻微位移 + 淡入，配合 Fluent 动效令牌 */
+.dropdown-menu .dropdown:hover > .dropdown-menu {
+    animation: qlxj-submenu-in var(--fluent-duration-fast, 150ms) var(--fluent-easing, ease) both;
+}
+
+@keyframes qlxj-submenu-in {
+    from {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 父条目 hover 时同步高亮，提示子菜单归属 */
+.dropdown-menu .dropdown:hover > .dropdown-item {
+    color: var(--bs-dropdown-link-hover-color);
+    background-color: var(--bs-dropdown-link-hover-bg);
+}
+
+/* 窄屏（折叠 navbar）下子菜单改为原地展开，避免向右溢出屏幕 */
+@media (max-width: 991.98px) {
+    .dropdown-menu .dropdown .dropdown-menu {
+        position: static;
+        margin-top: 0;
+        box-shadow: none;
+        border-left: 2px solid var(--fluent-stroke, #e5e5e5);
+        border-radius: 0;
+        margin-left: 0.75rem;
+    }
+
+    /* 触屏/窄屏没有 :hover，点击分类项（base.js 给子菜单加 .show）时也要能展开；
+       仅覆盖移动端，避免影响桌面端纯 hover 弹出 */
+    .dropdown-menu .dropdown .dropdown-menu.show {
+        display: block;
+    }
+}
+
+.dropdown-menu .dropdown-item:hover {
+    /* background: var(--qlxj-primary-deep); */
+    transform: scale(1.01);
+    border-color: var(--fluent-text-secondary);
+    box-shadow: inset 2px 0 0 var(--qlxj-primary);
+}
+
+/* --- 导航栏（浅色 Fluent）：白底 + 底部细描边，激活项品牌色底部指示条 --- */
+.navbar {
+    background: var(--fluent-surface);
+    border-bottom: 1px solid var(--fluent-stroke);
+}
+
+.navbar .nav-link {
+    border-radius: var(--fluent-radius-sm);
+    padding-inline: 0.75rem;
+    transition: background-color var(--fluent-duration-fast) ease;
+}
+
+.navbar .nav-link:hover {
+    background: var(--fluent-control-hover);
+}
+
+.navbar .nav-link.active {
+    color: var(--qlxj-primary-deep);
+    /* box-shadow: inset 0 -2px 0 var(--qlxj-primary); */
+}
+
+/* 青蓝主题导航栏（备用方案，未启用）：覆写 Bootstrap 的 navbar 变量接管配色 */
+.navbar-qlxj {
+    --bs-navbar-color: rgba(236, 254, 255, 0.92);
+    --bs-navbar-hover-color: #ffffff;
+    --bs-navbar-brand-color: rgba(236, 254, 255, 0.92);
+    --bs-navbar-brand-hover-color: #ffffff;
+    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.45);
+
+    background-color: var(--qlxj-primary-deep);
+    box-shadow: 0 2px 10px rgba(var(--qlxj-primary-deep-rgb), 0.35);
+}
+
+/* （备用方案配套）下拉菜单：白底 + 深青文字；hover/active 等状态交给 Bootstrap 的 dropdown 变量渲染 */
+.navbar-qlxj {
+    /* .navbar-qlxj .dropdown-menu { */
+    --bs-dropdown-link-color: var(--qlxj-primary-deep);
+    --bs-dropdown-link-hover-color: #0b5a70;
+    --bs-dropdown-link-hover-bg: #e6f7f9;
+
+    /* 去掉 Bootstrap 默认的 10rem 最小宽度，宽度贴合最长文字 */
+    /* --bs-dropdown-min-width: 0; */
+    /* 收窄上下留白：菜单内边距 + 条目内边距 */
+    --bs-dropdown-padding-y: 0.25rem;
+    --bs-dropdown-item-padding-y: 0.15rem;
+    --bs-dropdown-item-padding-x: 0.5rem;
+    background-color: #fff;
+    border: 0;
+    box-shadow: 0 6px 16px rgba(var(--qlxj-primary-deep-rgb), 0.18);
+    /* 折叠 navbar 下菜单是块级元素，width: max-content 可避免占满整行 */
+    /* width: max-content; */
+}
+
+/* .navbar {
+    background: linear-gradient(135deg, #08454D, #0E6E7A);
+} */
+
+/* 搜索框：白底输入框（含 focus），聚焦光晕用 Bootstrap 默认的青蓝色 */
+.navbar-qlxj .navbar-search .form-control,
+.navbar-qlxj .navbar-search .form-control:focus {
+    background-color: #fff;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+/* 导航栏搜索（默认基底主题，当前启用）：给足输入框宽度，并保证“搜索”按钮文字单行显示 */
+.navbar-search {
+    flex-wrap: nowrap;
+}
+
+.navbar-search .form-control {
+    min-width: 200px;
+    width: auto;
+    flex: 1 1 auto;
+}
+
+.navbar-search .btn {
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+/* 窄屏（折叠 navbar）：搜索框允许收缩，避免 min-width:200px 撑破容器导致横向溢出 */
+@media (max-width: 991.98px) {
+    .navbar-search {
+        width: 100%;
+    }
+
+    .navbar-search .form-control {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+/* Fluent 2 acrylic 材质：浮层用（下拉菜单、悬浮卡片） */
+.acrylic {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px) saturate(125%);
+    -webkit-backdrop-filter: blur(20px) saturate(125%);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+/* --- 按钮（Fluent 2 控件：4px 圆角 + semibold + 快速动效） --- */
+.btn {
+    border-radius: var(--fluent-radius-sm);
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    transition: all var(--fluent-duration-fast) var(--fluent-easing);
+    border: 1px solid transparent;
+}
+
+/* 实心主按钮：整组 --bs-btn-* 变量映射品牌青（Bootstrap 编译期色值只能这样接管） */
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-bg: var(--qlxj-primary);
+    --bs-btn-border-color: var(--qlxj-primary);
+    --bs-btn-hover-bg: var(--qlxj-primary-deep);
+    --bs-btn-hover-border-color: var(--qlxj-primary-deep);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--qlxj-primary-deep);
+    --bs-btn-active-border-color: var(--qlxj-primary-deep);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--qlxj-primary);
+    --bs-btn-disabled-border-color: var(--qlxj-primary);
+}
+
+.btn-primary:hover {
+    background: var(--qlxj-primary-deep);
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 120, 120, 0.25);
+}
+
+/* 描边主按钮：同上，一处定义全站生效 */
+.btn-outline-primary {
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #3d3d3d;
+
+    --bs-btn-color: var(--qlxj-primary-deep);
+    --bs-btn-border-color: var(--qlxj-primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--qlxj-primary);
+    --bs-btn-hover-border-color: var(--qlxj-primary);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--qlxj-primary-deep);
+    --bs-btn-active-border-color: var(--qlxj-primary-deep);
+    --bs-btn-disabled-color: var(--qlxj-primary);
+    --bs-btn-disabled-border-color: var(--qlxj-primary);
+}
+
+/* 主题实心按钮（备用方案，未启用）：hover/active 等状态交给 Bootstrap 的 button 变量渲染 */
+.btn-qlxj {
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-bg: var(--qlxj-primary-deep);
+    --bs-btn-border-color: var(--qlxj-primary-deep);
+    --bs-btn-hover-bg: var(--qlxj-primary);
+    --bs-btn-hover-border-color: var(--qlxj-primary);
+    --bs-btn-active-bg: var(--qlxj-primary-deep);
+    --bs-btn-active-border-color: var(--qlxj-primary-deep);
+}
+
+/* --- 表单控件（Fluent 2 文本框：聚焦时品牌色底部描边，无全圈光环） --- */
+.form-control,
+.form-select {
+    border-radius: var(--fluent-radius-sm);
+    border: 1px solid var(--fluent-stroke-strong);
+    background: var(--fluent-surface);
+    transition: border-color var(--fluent-duration-fast) ease, box-shadow var(--fluent-duration-fast) ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--qlxj-primary);
+    background: var(--fluent-surface);
+    box-shadow: inset 0 -2px 0 var(--qlxj-primary);
+}
+
+.form-check-input {
+    border-radius: var(--fluent-radius-round);
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    background-color: rgba(0, 0, 0, 0.08);
+    height: 20px;
+    width: 40px;
+    transition: all var(--fluent-duration-fast) ease;
+}
+
+.form-check-input:checked {
+    background-color: var(--qlxj-primary);
+    border-color: var(--qlxj-primary);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 3px rgba(var(--qlxj-primary-rgb), 0.2);
+}
+
+.btn-small-input {
+    /* 覆写 Bootstrap .btn 的宽松内边距，让“通过”等短文本按钮居中且尺寸合适 */
+    border-radius: var(--fluent-radius-round);
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-bg: var(--qlxj-primary);
+    --bs-btn-border-color: var(--qlxj-primary);
+    --bs-btn-hover-bg: var(--qlxj-primary-deep);
+    --bs-btn-hover-border-color: var(--qlxj-primary-deep);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--qlxj-primary-deep);
+    --bs-btn-active-border-color: var(--qlxj-primary-deep);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--qlxj-primary);
+    --bs-btn-disabled-border-color: var(--qlxj-primary);
+    transition: all var(--fluent-duration-fast) ease;
+    white-space: nowrap;
+    flex: 0 0 auto;
+
+    text-align: center;
+    line-height: 1.2;
+    padding: 0.25rem 0.9rem;
+    min-width: 3.5rem;
+    height: auto;
+    max-width: none;
+    max-height: none;
+}
+
+/* .btn-small-input:checked {
+    background-color: var(--qlxj-primary);
+    border-color: var(--qlxj-primary);
+} */
+
+.btn-small-input:hover {
+    background: var(--qlxj-primary-deep);
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 120, 120, 0.25);
+}
+
+.btn-small-input:focus {
+    box-shadow: 0 0 0 3px rgba(var(--qlxj-primary-rgb), 0.2);
+}
+
+/* --- 列表：悬停左侧品牌色指示条，叠加在 Bootstrap 自带 hover 底色上，无布局位移 --- */
+.list-group-item {
+    box-shadow: inset 3px 0 0 transparent;
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.list-group-item:hover {
+    box-shadow: inset 3px 0 0 var(--qlxj-primary);
+}
+
+/* --- 鼠标追踪高亮卡片（备用方案，未启用） --- */
+.reveal-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.reveal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(200px circle at var(--x) var(--y)), rgba(255, 255, 255, 0.15);
+    opacity: 0;
+    transition: opacity 0.2s;
+
+}
+
+/* ===== 5. 视觉母题工具类 ===== */
+
+/* 渐变文字：标题 / 数字强调 */
+.text-gradient {
+    background: var(--qlxj-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* 卡片顶部装饰条：默认主题渐变；
+   语义变体直接复用 Bootstrap 语义色，不为每种颜色另配渐变 */
+.accent-top-bar {
+    position: relative;
+}
+
+.accent-top-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--qlxj-bar, var(--qlxj-gradient));
+    border-radius: inherit;
+}
+
+.accent-top-bar--success {
+    --qlxj-bar: var(--bs-success);
+}
+
+.accent-top-bar--warning {
+    --qlxj-bar: var(--bs-warning);
+}
+
+.accent-top-bar--danger {
+    --qlxj-bar: var(--bs-danger);
+}
+
+/* 悬停抬升：可点击卡片的统一 hover 物理语言（Fluent elevation 16） */
+.hover-lift {
+    transition: transform var(--fluent-duration-normal) ease, box-shadow var(--fluent-duration-normal) ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--fluent-shadow-16);
+}
+
+/* glassmorphism design */
+.glass-primary {
+    background: rgba(var(--bs-primary-rgb), 0.15);
+    backdrop-filter: blur(12px);
+    border-color: rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.glass {
+    background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.35);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) insert 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+    border-radius: var(--bs-border-radius);
+
+}
+
+[data-bs-theme="dark"] .glass {
+    background: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== 6. 内容元素 ===== */
+.profile-avatar {
+    width: 40vw;
+    max-width: 100px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.profile-content-narrow {
+    width: min(100%, 480px);
+    max-width: 480px;
+    box-sizing: border-box;
+}
+
+.article-abstract {
+    max-width: 80%;
+    max-height: 12em;
+    overflow: hidden;
+}
+
+.article-content {
+    line-height: 1.8;
+    overflow-wrap: break-word;
+}
+
+#editor-area {
+    min-height: 100vh;
+}
+
+#editor-container {
+    min-height: 60vh;
+    height: 100%;
+}
+
+.content-narrow {
+    width: min(100%, 480px);
+    max-width: 480px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.footer_links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
