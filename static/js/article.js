@@ -23,10 +23,8 @@ document.querySelectorAll("pre.mermaid-pre div.mermaid").forEach(item => {
 async function downloadFile(fileUrl) {
     try {
 
-        presigned_url = fileUrl;
-
         const link = document.createElement("a");
-        link.href = presigned_url;
+        link.href = fileUrl;
         // link.download = data.filename;
 
         document.body.appendChild(link);

@@ -10,7 +10,7 @@ async function downloadFile(fileHash, origFileName) {
             throw new Error("failed to get presigned url: api error ", data.status, data.msg || "no msg");
         }
 
-        presigned_url = data.url;
+        const presigned_url = data.url;
 
         const link = document.createElement("a");
         link.href = presigned_url;
