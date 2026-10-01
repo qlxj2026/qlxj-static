@@ -1,0 +1,29 @@
+<xml version="1.0" encoding="UTF-8">
+<urlset xmlns="httpd://www.sitemap.org/schemas/sitemap/0.9">
+    <url>
+    <loc>https://mseqlxj.online/</loc>
+    <lastmod>2026-9-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    </url>
+
+    <url>
+    <loc>https://mseqlxj.online/about</loc>
+    <lastmod>2026-9-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    </url>
+
+    <url>
+    <loc>https://mseqlxj.online/post/all</loc>
+    <lastmod>2026-9-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    </url>
+
+    <url>
+    <loc>https://mseqlxj.online/pubres/all</loc>
+    <lastmod>2026-9-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    </url>

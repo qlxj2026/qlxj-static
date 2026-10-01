@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /signin/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /search/
+Disallow: /*?q=
+Disallow: /*?page=
+
+Crawl-delay: 10
+Sitemap: https://mseqlxj.online/static/sitemap.xml
+
+User-agent: Baiduspider
+Disallow: /post/
+Disallow: /pubres/
+
+User-agent: 360Spider
+Disallow: /
